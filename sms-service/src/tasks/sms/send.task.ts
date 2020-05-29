@@ -4,21 +4,18 @@ import {
   TaskHandlerBase,
 } from 'polymetis-node';
 
+import { ISMSData } from '../../interfaces';
+
 export default class Handler extends TaskHandlerBase {
-  public topic = 'check.healthz';
+  public topic = 'send.sms';
 
   constructor(resources: ServiceResources) {
     super(resources);
   }
 
   protected async handleCallback(data: any): Promise<void> {
-    this.resources.logger.info('Healthz checked');
+    const smsData: ISMSData = _.get(data, 'smsData');
 
-    await this.emitEvent(
-      'healthz.checked',
-      {
-        service: this.resources.configuration.service.service,
-      },
-    );
+    this.resources.logger.info('SMS sended', smsData);
   }
 }
