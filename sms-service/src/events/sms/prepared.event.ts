@@ -16,7 +16,11 @@ export default class Handler extends EventHandlerBase {
   protected async handleCallback(data: any): Promise<void> {
     const smsData: ISMSData = _.get(data, 'smsData');
 
-    if (!smsData) {
+    if (
+      !smsData
+      || !smsData.phone
+      || !smsData.text
+    ) {
       throw Error('Wrong payload');
     }
 
