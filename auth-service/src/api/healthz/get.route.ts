@@ -2,9 +2,9 @@ import * as _ from 'lodash';
 import {
   Request,
   Response,
+  RouteBaseTrustedMethods,
   RouteHandlerBase,
   ServiceResources,
-  RouteBaseTrustedMethods,
 } from 'polymetis-node';
 
 export default class RouteHandlerBaseImpl extends RouteHandlerBase {

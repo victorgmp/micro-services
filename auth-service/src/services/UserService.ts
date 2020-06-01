@@ -3,10 +3,9 @@ import jwt from 'jsonwebtoken';
 import { ServiceResources } from 'polymetis-node';
 
 import MongoDBConnection from '../libs/MongoDBConnection';
-
 import TwoFACodeService from './TwoFACodeService';
 import User, { IUserInt } from '../models/UserModel';
-import { IUser, ISMSData } from '../interfaces/';
+import { IEmailData, ISMSData, IUser } from '../interfaces/';
 
 interface ISuccessSignIn {
   user: IUser;
@@ -49,12 +48,14 @@ export default class UserService {
       newUser = await newUser.save();
 
       // data to send email
-      const EmailData: ISMSData = {
-        phone: returnedUser.phone,
-        text: `Your code is ${twoFACode.code}`,
+      const emailData: IEmailData = {
+        from: 'victorgmp.developer@gmail.com',
+        to: newUser.email,
+        subject: 'My App - Welcome',
+        body: 'Thanks to register!',
       };
       // emit an event to send a welcome email
-      await this.resources.rabbit.emit('sms.prepared', { smsData });
+      await this.resources.rabbit.emit('email.prepared', { emailData });
 
       return this.toPublic(newUser);
     } catch (error) {

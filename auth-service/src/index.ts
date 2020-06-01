@@ -1,4 +1,4 @@
-import { ServiceBase, Configuration } from 'polymetis-node';
+import { Configuration, ServiceBase } from 'polymetis-node';
 
 // Initializing service
 const configuration: Configuration = {

@@ -1,12 +1,34 @@
 {
-    "defaultSeverity": "error",
-    "extends": "tslint-config-airbnb",
-    "jsRules": {},
-    "rules": {
-        "eofline": false,
-        "max-line-length": false,
-        "no-increment-decrement": false,
-        "import-name": false
-    },
-    "rulesDirectory": []
+	"defaultSeverity": "error",
+	"extends": "tslint-config-airbnb",
+	"jsRules": {},
+	"rules": {
+		"eofline": false,
+		"no-increment-decrement": false,
+		"import-name": false,
+		"semicolon": [
+			true,
+			"always"
+		],
+		"object-literal-sort-keys": [
+			false
+		],
+		"indent": [
+			true,
+			"spaces",
+			2
+		],
+		"max-line-length": [
+			true,
+			120
+		],
+			"ordered-imports": [
+				true,
+				{
+					"import-sources-order": "any",
+					"named-imports-order": "case-insensitive"
+				}
+			]
+	},
+	"rulesDirectory": []
 }

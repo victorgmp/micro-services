@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { ServiceResources, RPCHandlerBase } from 'polymetis-node';
+import { RPCHandlerBase, ServiceResources } from 'polymetis-node';
 
 export default class Handler extends RPCHandlerBase {
   public topic = 'check-healthz';

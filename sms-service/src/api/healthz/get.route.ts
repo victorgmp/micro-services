@@ -2,8 +2,8 @@ import * as _ from 'lodash';
 import {
   Request,
   Response,
-  RouteHandlerBase,
   RouteBaseTrustedMethods,
+  RouteHandlerBase,
   ServiceResources,
 } from 'polymetis-node';
 
