@@ -4,26 +4,28 @@ import {
   ServiceResources,
 } from 'polymetis-node';
 
-import { ISMSData } from '../../interfaces';
+import { IEmailData } from '../../interfaces';
 
 export default class Handler extends EventHandlerBase {
-  public topic = 'sms.prepared';
+  public topic = 'email.prepared';
 
   constructor(resources: ServiceResources) {
     super(resources);
   }
 
   protected async handleCallback(data: any): Promise<void> {
-    const smsData: ISMSData = _.get(data, 'smsData');
+    const emailData: IEmailData = _.get(data, 'emailData');
 
     if (
-      !smsData
-      || !smsData.phone
-      || !smsData.text
+      !emailData
+      || !emailData.from
+      || !emailData.to
+      || !emailData.subject
+      || !emailData.body
     ) {
       throw Error('Wrong payload');
     }
 
-    await this.emitTask('send.sms', { smsData });
+    await this.emitTask('send.sms', { emailData });
   }
 }

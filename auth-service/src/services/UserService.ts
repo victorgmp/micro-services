@@ -48,6 +48,14 @@ export default class UserService {
       newUser.password = await newUser.encryptPassword(newUser.password);
       newUser = await newUser.save();
 
+      // data to send email
+      const EmailData: ISMSData = {
+        phone: returnedUser.phone,
+        text: `Your code is ${twoFACode.code}`,
+      };
+      // emit an event to send a welcome email
+      await this.resources.rabbit.emit('sms.prepared', { smsData });
+
       return this.toPublic(newUser);
     } catch (error) {
       this.resources.logger.error('AuthService::signUp', error);
@@ -80,11 +88,12 @@ export default class UserService {
         const twoFACode = await this.twoFACodeService.createUserCode(returnedUser.id);
         // print here code for debugging
         // this.resources.logger.debug('AuthService::2fa code', twoFACode.code);
+        // data to send sms
         const smsData: ISMSData = {
           phone: returnedUser.phone,
           text: `Your code is ${twoFACode.code}`,
         };
-        // emit code to be send by email or sms
+        // emit an event to be send an email
         await this.resources.rabbit.emit('sms.prepared', { smsData });
       } else {
         const token: string = this.createToken(returnedUser);

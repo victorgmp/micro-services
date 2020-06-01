@@ -18,12 +18,13 @@ export default class SMSService {
     try {
       // check the enviroment
       if (this.resources.configuration.service.environment === 'local') {
-        const date = new Date();
-        const smsPath = `${date}.sms.txt`;
+        const today = new Date();
+        const todayString = today.toISOString();
+        const smsPath = `${todayString}.sms.txt`;
 
         const smsContent = `
-          to: ${data.phone} \n
-          body: ${data.text} \n
+        to: ${data.phone} \n
+        body: ${data.text} \n
         `;
 
         fs.writeFile(smsPath, smsContent, (error) => {
