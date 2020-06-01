@@ -38,6 +38,9 @@ export default class SMSService {
         // put here the code to send message a true message
       }
 
+      // informational event
+      await this.resources.rabbit.emit('sms.sent', { data: data.phone });
+
     } catch (error) {
       this.resources.logger.error('SMSService::sendSMS', error);
       throw error;
