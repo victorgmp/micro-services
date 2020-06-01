@@ -23,7 +23,7 @@ export default class Handler extends EventHandlerBase {
     ) {
       throw Error('Wrong payload');
     }
-
+    
     await this.emitTask('send.sms', { smsData });
   }
 }
