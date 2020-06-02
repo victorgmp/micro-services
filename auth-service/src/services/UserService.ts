@@ -60,14 +60,16 @@ export default class UserService {
         from: 'victorgmp.developer@gmail.com',
         to: newUser.email,
         subject: 'My App - Welcome',
-        text: 'Thanks to register!',
+        body: 'Thanks to register!',
       };
       // emit an event to send a welcome email
       await this.resources.rabbit.emit('email.prepared', { emailData });
 
-      emailData.text = `
+      emailData.body = `
+      <body>
       Please open this link to verified your email:
-      http://localhost:8001/email-verification?${email}&${hash}`;
+      <a href="http://${process.env.CLIENT_BASE_URL}/email-verification?${email}&${hash}">Confirm email</a>
+      </body>`;
       // emit an event to send a verification email
       await this.resources.rabbit.emit('email.prepared', { emailData });
 
@@ -78,6 +80,11 @@ export default class UserService {
     }
   }
 
+  /**
+  * user login
+  * @param email
+  * @param password
+  */
   async signIn(email: string, password: string): Promise<ISuccessSignIn> {
     try {
       await this.db.connect();
@@ -122,7 +129,13 @@ export default class UserService {
     }
   }
 
-  async changePassword(email: string, password: string, newPassword: string): Promise<{ user: IUser, isUpdated: Boolean }> {
+  /**
+  * user password change
+  * @param email
+  * @param password
+  * @param newPassword
+  */
+  async changePassword(email: string, password: string, newPassword: string): Promise<{ user: IUser, isUpdated: boolean }> {
     try {
       await this.db.connect();
       // verify if the user already exists
@@ -133,11 +146,10 @@ export default class UserService {
 
       const isMatch = await returnedUser.comparePassword(password);
       if (isMatch) {
-        returnedUser.password = await returnedUser.encryptPassword(newPassword);
-
+        const updatePassword = await returnedUser.encryptPassword(newPassword);
         const isUpdated = await User.updateOne(
           { _id: returnedUser.id },
-          { password: returnedUser.password },
+          { password: updatePassword },
         );
 
         if (!!isUpdated.ok) {
@@ -172,6 +184,11 @@ export default class UserService {
   //   }
   // }
 
+  /**
+  * Two factor authentication login
+  * @param userId
+  * @param code
+  */
   async twoFASignIn(userId: string, code: number): Promise<ISuccessSignIn> {
     try {
       await this.db.connect();
@@ -185,7 +202,7 @@ export default class UserService {
       const token: string = this.createToken(returnedUser);
       const user = this.toPublic(returnedUser);
       // deactivate code
-      // await this.twoFACodeService.deactivateUserCode(returnedUser.id);
+      await this.twoFACodeService.deactivateUserCode(returnedUser.id);
 
       return { user, token };
     } catch (error) {
@@ -194,11 +211,16 @@ export default class UserService {
     }
   }
 
-  async updateProfile(id: string, token: string) {
+  /**
+  * Update user profile
+  * @param userId
+  * @param token
+  */
+  async updateProfile(userId: string, token: string) {
     try {
       await this.db.connect();
       // verify if the user already exists
-      const user = await User.findById(id);
+      const user = await User.findById(userId);
       // const returnedUser = await User.findOne({ email });
       if (_.isNil(user)) {
         throw Error('User not found');
@@ -207,6 +229,42 @@ export default class UserService {
       return user;
     } catch (error) {
       this.resources.logger.error('AuthService::updateProfile', error);
+      throw error;
+    }
+  }
+
+  /**
+  * Update user profile
+  * @param userId
+  * @param token
+  */
+  async verifyUserEmail(email: string, hash: string): Promise<{ user: IUser, isVerified: boolean }> {
+    try {
+      await this.db.connect();
+      // verify if the user already exists
+      const returnedUser = await User.findOne({ email });
+      if (!returnedUser) {
+        throw Error('The user does not exists');
+      }
+
+      let isMatch = false;
+      if (returnedUser.email === email && returnedUser.hash === hash) {
+        isMatch = true;
+
+        const isUpdated = await User.updateOne(
+          { _id: returnedUser.id },
+          { verified: true },
+        );
+
+        if (!!isUpdated.ok) {
+          const user = this.toPublic(returnedUser);
+          return { user, isVerified: true };
+        }
+      }
+
+      throw Error('The email or hash are invalids');
+    } catch (error) {
+      this.resources.logger.error('AuthService::verifyUser', error);
       throw error;
     }
   }

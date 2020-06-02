@@ -20,13 +20,13 @@ export default class EmailService {
       if (this.resources.configuration.service.environment === 'local') {
         const today = new Date();
         const todayString = today.toISOString();
-        const emailPath = `${todayString}.email.txt`;
+        const emailPath = `${todayString}.email.html`;
 
         const emailContent = `
         from: ${data.from} \n
         to: ${data.to} \n
         subject: ${data.subject} \n
-        body: ${data.text} \n
+        body: ${data.body} \n
         `;
 
         fs.writeFile(emailPath, emailContent, (error) => {

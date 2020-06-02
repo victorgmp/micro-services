@@ -21,7 +21,7 @@ export default class Handler extends EventHandlerBase {
       || !emailData.from
       || !emailData.to
       || !emailData.subject
-      || !emailData.text
+      || !emailData.body
     ) {
       throw Error('Wrong payload');
     }

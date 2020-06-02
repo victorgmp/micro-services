@@ -20,7 +20,7 @@
 		],
 		"max-line-length": [
 			true,
-			120
+			130
 		],
 			"ordered-imports": [
 				true,
