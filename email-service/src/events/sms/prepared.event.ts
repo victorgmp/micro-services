@@ -21,11 +21,11 @@ export default class Handler extends EventHandlerBase {
       || !emailData.from
       || !emailData.to
       || !emailData.subject
-      || !emailData.body
+      || !emailData.text
     ) {
       throw Error('Wrong payload');
     }
 
-    await this.emitTask('send.sms', { emailData });
+    await this.emitTask('send.email', { emailData });
   }
 }

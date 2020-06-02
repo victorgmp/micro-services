@@ -3,7 +3,6 @@ import { ServiceResources } from 'polymetis-node';
 
 import MongoDBConnection from '../libs/MongoDBConnection';
 
-// import UserService from './UserService';
 import TwoFACode, { ITwoFACodeInt } from '../models/TwoFACodeModel';
 import { CodeStatus } from '../enums/CodeStatus';
 

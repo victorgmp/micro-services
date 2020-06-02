@@ -25,8 +25,8 @@ export default class EmailService {
         const emailContent = `
         from: ${data.from} \n
         to: ${data.to} \n
-        to: ${data.subject} \n
-        body: ${data.body} \n
+        subject: ${data.subject} \n
+        body: ${data.text} \n
         `;
 
         fs.writeFile(emailPath, emailContent, (error) => {
@@ -38,7 +38,7 @@ export default class EmailService {
         });
 
       } else {
-        // put here the code to send message a true message
+        // put here the code to send a true email
       }
 
       // informational event

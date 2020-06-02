@@ -7,6 +7,7 @@ export interface IUserInt extends Document {
   username: string;
   phone: string;
   password: string;
+  hash: string;
   twofa: boolean;
   encryptPassword: (password: string) => Promise<string>;
   comparePassword: (password: string) => Promise<boolean>;
@@ -30,6 +31,11 @@ const userSchema: Schema = new Schema(
     },
     password: {
       type: String,
+      required: true,
+    },
+    hash: {
+      type: String,
+      unique: true,
       required: true,
     },
     phone: {

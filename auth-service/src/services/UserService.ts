@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 import jwt from 'jsonwebtoken';
+import * as crypto from 'crypto';
+
 import { ServiceResources } from 'polymetis-node';
 
 import MongoDBConnection from '../libs/MongoDBConnection';
@@ -43,8 +45,14 @@ export default class UserService {
         throw Error('The user already exists');
       }
 
-      let newUser = new User({ email, username, password });
+      // create user hash
+      let hash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      hash = crypto.createHash('md5').update(hash.toString()).digest('hex');
+
+      let newUser = new User({ email, username, password, hash });
+      // encrypt user password
       newUser.password = await newUser.encryptPassword(newUser.password);
+      // add a new user
       newUser = await newUser.save();
 
       // data to send email
@@ -52,9 +60,15 @@ export default class UserService {
         from: 'victorgmp.developer@gmail.com',
         to: newUser.email,
         subject: 'My App - Welcome',
-        body: 'Thanks to register!',
+        text: 'Thanks to register!',
       };
       // emit an event to send a welcome email
+      await this.resources.rabbit.emit('email.prepared', { emailData });
+
+      emailData.text = `
+      Please open this link to verified your email:
+      http://localhost:8001/email-verification?${email}&${hash}`;
+      // emit an event to send a verification email
       await this.resources.rabbit.emit('email.prepared', { emailData });
 
       return this.toPublic(newUser);

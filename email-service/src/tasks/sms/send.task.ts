@@ -17,9 +17,9 @@ export default class Handler extends TaskHandlerBase {
   }
 
   protected async handleCallback(data: any): Promise<void> {
-    const smsData: IEmailData = _.get(data, 'smsData');
+    const emailData: IEmailData = _.get(data, 'emailData');
 
-    this.resources.logger.info('Sending sms...');
-    this.emailService.sendEmail(smsData);
+    this.resources.logger.info('Sending email...');
+    this.emailService.sendEmail(emailData);
   }
 }
